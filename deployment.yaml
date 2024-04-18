@@ -1,0 +1,32 @@
+# deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather-microservice
+  template:
+    metadata:
+      labels:
+        app: weather-microservice
+    spec:
+      containers:
+      - name: weather-microservice
+        image: apurvvaish/weather-forecast:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: OPENWEATHERMAP_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openweathermap-secret
+              key: api_key
+        - name: OPENWEATHERMAP_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: openweathermap-config
+              key: api_url
